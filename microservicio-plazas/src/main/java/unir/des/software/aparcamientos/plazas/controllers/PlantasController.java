@@ -20,7 +20,7 @@ import java.util.Map;
 public class PlantasController {
     private final PlantasService service;
 
-    @GetMapping("/plantas/")
+    @GetMapping("/plantas")
     public ResponseEntity<List<Planta>> getPlantas(
             @RequestHeader Map<String, String> headers) {
         log.info("headers:{}", headers);

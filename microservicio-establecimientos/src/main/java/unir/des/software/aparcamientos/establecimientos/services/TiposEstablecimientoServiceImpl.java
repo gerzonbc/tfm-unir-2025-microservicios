@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import unir.des.software.aparcamientos.establecimientos.controllers.model.TipoEstablecimientoDto;
 import unir.des.software.aparcamientos.establecimientos.data.model.TipoEstablecimiento;
-import unir.des.software.aparcamientos.establecimientos.data.persistence.TiposEstablecimientoRepositoryImpl;
+import unir.des.software.aparcamientos.establecimientos.data.persistence.TiposEstablecimientoRepository;
 
 import java.util.List;
 
@@ -14,21 +14,21 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class TiposEstablecimientoServiceImpl implements TiposEstablecimientoService {
-    private final TiposEstablecimientoRepositoryImpl repository;
+    private final TiposEstablecimientoRepository repository;
 
     @Override
     public List<TipoEstablecimiento> getTiposEstablecimiento() {
-        return repository.getAll();
+        return repository.findAll();
     }
 
     @Override
     public TipoEstablecimiento getTipoEstablecimiento(String id) {
-        return repository.getById(id);
+        return repository.findById(id).orElse(null);
     }
 
     @Override
     public Boolean eliminarTipoEstablecimiento(String id) {
-        TipoEstablecimiento tipoEstablecimiento = repository.getById(id);
+        TipoEstablecimiento tipoEstablecimiento = repository.findById(id).orElse(null);
         if(tipoEstablecimiento != null) {
             repository.delete(tipoEstablecimiento);
             return Boolean.TRUE;
@@ -49,7 +49,7 @@ public class TiposEstablecimientoServiceImpl implements TiposEstablecimientoServ
 
     @Override
     public TipoEstablecimiento actualizarTipoEstablecimiento(String id, TipoEstablecimientoDto tipoEstablecimientoModificar) {
-        TipoEstablecimiento tipoEstablecimiento = repository.getById(id);
+        TipoEstablecimiento tipoEstablecimiento = repository.findById(id).orElse(null);
         if(tipoEstablecimiento != null) {
             tipoEstablecimiento.prepareUpdate(tipoEstablecimientoModificar);
             repository.save(tipoEstablecimiento);

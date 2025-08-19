@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import unir.des.software.aparcamientos.plazas.controllers.model.PlazaDto;
 import unir.des.software.aparcamientos.plazas.data.model.Plaza;
-import unir.des.software.aparcamientos.plazas.data.persistence.PlazasRepositoryImpl;
+import unir.des.software.aparcamientos.plazas.data.persistence.PlazasRepository;
 
 import java.util.List;
 
@@ -14,21 +14,21 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PlazasServiceImpl implements PlazasService {
-    private final PlazasRepositoryImpl repository;
+    private final PlazasRepository repository;
 
     @Override
     public List<Plaza> getPlazas() {
-        return repository.getAll();
+        return repository.findAll();
     }
 
     @Override
     public Plaza getPlaza(String id) {
-        return repository.getById(id);
+         return repository.findById(id).orElse(null);
     }
 
     @Override
     public Boolean eliminarPlaza(String id) {
-        Plaza plaza = repository.getById(id);
+        Plaza plaza = repository.findById(id).orElse(null);
         if(plaza != null) {
             repository.delete(plaza);
             return Boolean.TRUE;
@@ -49,7 +49,7 @@ public class PlazasServiceImpl implements PlazasService {
 
     @Override
     public Plaza actualizarPlaza(String id, PlazaDto plazaModificar) {
-        Plaza plaza = repository.getById(id);
+        Plaza plaza = repository.findById(id).orElse(null);
         if(plaza != null) {
             plaza.prepareUpdate(plazaModificar);
             repository.save(plaza);

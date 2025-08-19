@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import unir.des.software.aparcamientos.plazas.controllers.model.PlantaDto;
 import unir.des.software.aparcamientos.plazas.data.model.Planta;
-import unir.des.software.aparcamientos.plazas.data.persistence.PlantasRepositoryImpl;
+import unir.des.software.aparcamientos.plazas.data.persistence.PlantasRepository;
 
 import java.util.List;
 
@@ -14,21 +14,21 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PlantasServiceImpl implements PlantasService {
-    private final PlantasRepositoryImpl repository;
+    private final PlantasRepository repository;
 
     @Override
     public List<Planta> getPlantas() {
-        return repository.getAll();
+        return repository.findAll();
     }
 
     @Override
     public Planta getPlanta(String id) {
-        return repository.getById(id);
+        return repository.findById(id).orElse(null);
     }
 
     @Override
     public Boolean eliminarPlanta(String id) {
-        Planta planta = repository.getById(id);
+        Planta planta = repository.findById(id).orElse(null);
         if(planta != null) {
             repository.delete(planta);
             return Boolean.TRUE;
@@ -49,7 +49,7 @@ public class PlantasServiceImpl implements PlantasService {
 
     @Override
     public Planta actualizarPlanta(String id, PlantaDto plantaModificar) {
-        Planta planta = repository.getById(id);
+        Planta planta = repository.findById(id).orElse(null);
         if(planta != null) {
             planta.prepareUpdate(plantaModificar);
             repository.save(planta);

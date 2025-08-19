@@ -20,7 +20,7 @@ import java.util.Map;
 public class TiposEstablecimientoController {
     private final TiposEstablecimientoService service;
 
-    @GetMapping("/tipos-establecimientos/")
+    @GetMapping("/tipos-establecimientos")
     public ResponseEntity<List<TipoEstablecimiento>> getPersonas(
             @RequestHeader Map<String, String> headers) {
         log.info("headers:{}", headers);

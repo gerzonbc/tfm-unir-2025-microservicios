@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import unir.des.software.aparcamientos.establecimientos.controllers.model.EstablecimientoDto;
 import unir.des.software.aparcamientos.establecimientos.data.model.Establecimiento;
-import unir.des.software.aparcamientos.establecimientos.data.persistence.EstablecimientosRepositoryImpl;
+import unir.des.software.aparcamientos.establecimientos.data.persistence.EstablecimientosRepository;
 
 import java.util.List;
 
@@ -14,21 +14,21 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class EstablecimientosServiceImpl implements EstablecimientosService {
-    private final EstablecimientosRepositoryImpl repository;
+    private final EstablecimientosRepository repository;
 
     @Override
     public List<Establecimiento> getEstablecimientos() {
-        return repository.getAll();
+        return repository.findAll();
     }
 
     @Override
     public Establecimiento getEstablecimiento(String id) {
-        return repository.getById(id);
+        return repository.findById(id).orElse(null);
     }
 
     @Override
     public Boolean eliminarEstablecimiento(String id) {
-        Establecimiento establecimiento = repository.getById(id);
+        Establecimiento establecimiento = repository.findById(id).orElse(null);
         if(establecimiento != null) {
             repository.delete(establecimiento);
             return Boolean.TRUE;
@@ -49,7 +49,7 @@ public class EstablecimientosServiceImpl implements EstablecimientosService {
 
     @Override
     public Establecimiento actualizarEstablecimiento(String id, EstablecimientoDto establecimientoModificar) {
-        Establecimiento establecimiento = repository.getById(id);
+        Establecimiento establecimiento = repository.findById(id).orElse(null);
         if(establecimiento != null) {
             establecimiento.prepareUpdate(establecimientoModificar);
             repository.save(establecimiento);
