@@ -1,14 +1,14 @@
 server:
-  port: 8090
+  port: 9090
 
 spring:
   application:
-    name: microservice-parking
+    name: microservice-slot
   config:
     import: optional:configserver:http://localhost:8888
   data:
     mongodb:
-      uri: mongodb://admin:alcivar170816@localhost:27017/parkingDb?authSource=admin
+      uri: mongodb://admin:alcivar170816@localhost:27017/slotDb?authSource=admin
 
 eureka:
   instance:
