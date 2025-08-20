@@ -1,5 +1,6 @@
 package unir.des.software.smart.city.parking.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import unir.des.software.smart.city.parking.services.ParkingTypeService;
 import java.net.URI;
 import java.util.List;
 
+@Tag(name = "Parking Types", description = "CRUD de Tipos de Aparcamiento")
 @Validated
 @RequiredArgsConstructor
 @RestController

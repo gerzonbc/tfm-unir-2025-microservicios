@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import unir.des.software.smart.city.parking.exception.BusinessException;
 import unir.des.software.smart.city.parking.exception.ResourceNotFoundException;
 
@@ -145,5 +146,17 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.status(409).body(body);
+    }
+
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiError> handleNoResource(NoResourceFoundException ex, HttpServletRequest req) {
+        ApiError body = ApiError.builder()
+                .timestamp(Instant.now())
+                .status(404)
+                .error("Not Found")
+                .message(ex.getMessage())
+                .path(req.getRequestURI())
+                .build();
+        return ResponseEntity.status(404).body(body);
     }
 }
