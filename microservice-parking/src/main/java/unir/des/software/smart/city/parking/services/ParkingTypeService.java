@@ -10,6 +10,7 @@ import unir.des.software.smart.city.parking.dto.ParkingTypeResponse;
 import unir.des.software.smart.city.parking.exception.BusinessException;
 import unir.des.software.smart.city.parking.mapper.ParkingTypeMapper;
 import unir.des.software.smart.city.parking.model.ParkingType;
+import unir.des.software.smart.city.parking.repository.ParkingRepository;
 import unir.des.software.smart.city.parking.repository.ParkingTypeRepository;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class ParkingTypeService {
 
     private final ParkingTypeMapper mapper;
     private final ParkingTypeRepository repository;
+    private final ParkingRepository parkingRepository;
+    private final ParkingService parkingService;
 
 
     public List<ParkingTypeResponse> getParkingTypes() {
@@ -67,12 +70,17 @@ public class ParkingTypeService {
         } catch (DuplicateKeyException e) {
             throw new BusinessException("El nombre del tipo de estacionamiento ya existe: " + request.getName());
         }
+        parkingService.syncTypeByCode(saved.getId());
         return mapper.toResponse(saved);
     }
 
     public void deleteParkingType(String id) {
         if (!repository.existsById(id)) {
             throw new BusinessException("Tipo de estacionamiento no encontrado con id: " + id);
+        }
+        long refs = parkingRepository.countByTypeId(id);
+        if (refs > 0) {
+            throw new BusinessException("No se puede eliminar: hay " + refs + " parkings con este tipo.");
         }
         repository.deleteById(id);
     }

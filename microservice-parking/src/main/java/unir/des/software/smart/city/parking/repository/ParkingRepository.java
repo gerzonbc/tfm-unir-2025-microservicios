@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ParkingRepository extends MongoRepository<Parking, String> {
     List<Parking> findByTypeId(String typeId);
+    long countByTypeId(String typeId);
 }

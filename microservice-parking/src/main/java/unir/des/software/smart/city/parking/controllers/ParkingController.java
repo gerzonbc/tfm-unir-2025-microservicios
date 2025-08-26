@@ -47,7 +47,7 @@ public class ParkingController {
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ParkingResponse update(@PathVariable String id,
                                   @Valid @RequestBody ParkingPTCRequest request) {
         return service.updateParking(id, request);
