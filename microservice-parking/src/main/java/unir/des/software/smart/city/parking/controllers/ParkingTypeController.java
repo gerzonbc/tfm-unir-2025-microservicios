@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import unir.des.software.smart.city.parking.dto.ParkingTypeRequest;
+import unir.des.software.smart.city.parking.dto.ParkingTypePSTRequest;
+import unir.des.software.smart.city.parking.dto.ParkingTypePTCRequest;
 import unir.des.software.smart.city.parking.dto.ParkingTypeResponse;
 import unir.des.software.smart.city.parking.services.ParkingTypeService;
 
@@ -34,21 +35,21 @@ public class ParkingTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<ParkingTypeResponse> create(@Valid @RequestBody ParkingTypeRequest request) {
+    public ResponseEntity<ParkingTypeResponse> create(@Valid @RequestBody ParkingTypePSTRequest request) {
         ParkingTypeResponse created = service.createParkingType(request);
 
         URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()        // /api/v1/parking-types
-                .path("/{id}")               // añade /{id}
+                .fromCurrentRequest()
+                .path("/{id}")
                 .buildAndExpand(created.getId())
                 .toUri();
 
         return ResponseEntity.created(location).body(created);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ParkingTypeResponse update(@PathVariable String id,
-                                      @Valid @RequestBody ParkingTypeRequest request) {
+                                      @Valid @RequestBody ParkingTypePTCRequest request) {
         return service.updateParkingType(id, request);
     }
 

@@ -1,13 +1,14 @@
 package unir.des.software.smart.city.parking.mapper;
 
 import org.springframework.stereotype.Component;
-import unir.des.software.smart.city.parking.dto.ParkingTypeRequest;
+import unir.des.software.smart.city.parking.dto.ParkingTypePSTRequest;
+import unir.des.software.smart.city.parking.dto.ParkingTypePTCRequest;
 import unir.des.software.smart.city.parking.dto.ParkingTypeResponse;
 import unir.des.software.smart.city.parking.model.ParkingType;
 
 @Component
 public class ParkingTypeMapper {
-    public ParkingType toEntity(ParkingTypeRequest req) {
+    public ParkingType toEntity(ParkingTypePSTRequest req) {
         return ParkingType.builder()
                 .name(req.getName())
                 .description(req.getDescription())
@@ -22,7 +23,7 @@ public class ParkingTypeMapper {
                 .build();
     }
 
-    public void updateEntity(ParkingTypeRequest req, ParkingType entity) {
+    public void updateEntity(ParkingTypePTCRequest req, ParkingType entity) {
         if (req.getName() != null) {
             entity.setName(req.getName());
         }

@@ -4,7 +4,8 @@ import com.mongodb.DuplicateKeyException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import unir.des.software.smart.city.parking.dto.ParkingTypeRequest;
+import unir.des.software.smart.city.parking.dto.ParkingTypePSTRequest;
+import unir.des.software.smart.city.parking.dto.ParkingTypePTCRequest;
 import unir.des.software.smart.city.parking.dto.ParkingTypeResponse;
 import unir.des.software.smart.city.parking.exception.BusinessException;
 import unir.des.software.smart.city.parking.mapper.ParkingTypeMapper;
@@ -32,7 +33,7 @@ public class ParkingTypeService {
     }
 
     @Transactional
-    public ParkingTypeResponse createParkingType(ParkingTypeRequest request) {
+    public ParkingTypeResponse createParkingType(ParkingTypePSTRequest request) {
         if (repository.existsByNameIgnoreCase(request.getName())) {
             throw new BusinessException("El nombre del tipo de estacionamiento ya existe: " + request.getName());
         }
@@ -47,7 +48,7 @@ public class ParkingTypeService {
     }
 
     @Transactional
-    public ParkingTypeResponse updateParkingType(String id, ParkingTypeRequest request) {
+    public ParkingTypeResponse updateParkingType(String id, ParkingTypePTCRequest request) {
         ParkingType entity = repository.findById(id)
                 .orElseThrow(() -> new BusinessException("Tipo de estacionamiento no encontrado con id: " + id));
 

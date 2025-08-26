@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ParkingTypeRequest {
+public class ParkingTypePSTRequest {
     @NotBlank(message = "Nombre is requerido")
     @NotNull(message = "Nombre no puede ser nulo")
     private String name;
