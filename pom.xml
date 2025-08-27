@@ -18,7 +18,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>microservice-config</module>
         <module>microservice-eureka</module>
         <module>microservice-gateway</module>
         <module>microservice-parking</module>
