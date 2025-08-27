@@ -7,22 +7,21 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>        
+        <version>3.5.4</version>
     </parent>
 
-    <groupId>unir.des.software.aparcamientos</groupId>
-    <artifactId>microservicios</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>unir.des.software.smart.city</groupId>
+    <artifactId>microservices</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
-    <name>microservicios</name>
+    <name>microservices</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>microservicio-config</module>
-        <module>microservicio-eureka</module>
-        <module>microservicio-gateway</module>
-        <module>microservicio-establecimientos</module>
-        <module>microservicio-plazas</module>
+        <module>microservice-eureka</module>
+        <module>microservice-gateway</module>
+        <module>microservice-parking</module>
+        <module>microservice-slot</module>
     </modules>
 
     <properties>
@@ -34,21 +33,21 @@
 
     <dependencies>
         <dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.38</version>
-		</dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+        </dependency>
     </dependencies>
 
     <build>
         <pluginManagement>
-            <plugins>            
+            <plugins>
                 <plugin>
-				    <groupId>org.springframework.boot</groupId>
+                    <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>3.5.3</version>                    
-			    </plugin>
-            </plugins>            
+                    <version>3.5.3</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
 </project>

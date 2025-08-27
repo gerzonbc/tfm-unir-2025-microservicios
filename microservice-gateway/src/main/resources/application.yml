@@ -1,0 +1,42 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: microservice-gateway
+  config:
+    import: optional:configserver:http://localhost:8888
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+          # ANTES: spring.cloud.gateway.globalcors.cors-configurations...
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedorigins: "*"
+                allowedheaders: "*"
+                allowedmethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - PATCH
+
+
+## We enable the Actuator API to be able to access <<host>>/actuator/gateway/routes
+## We expose the routings that have been automatically detected (all)
+## Depending on the ROUTE_TABLES_ENABLED environment variable (true by default)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      access: read-only   # opciones típicas: read-only | write | none
