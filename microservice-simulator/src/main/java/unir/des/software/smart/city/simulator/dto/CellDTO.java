@@ -1,0 +1,19 @@
+package unir.des.software.smart.city.simulator.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CellDTO {
+    int row;
+    int col;
+    String type;
+    String slotId;
+    String slotCode;
+    Boolean occupied;
+}

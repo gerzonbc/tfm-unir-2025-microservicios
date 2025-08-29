@@ -3,12 +3,13 @@ package unir.des.software.smart.city.slots.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import unir.des.software.smart.city.slots.dto.CellDTO;
 import unir.des.software.smart.city.slots.dto.FloorLayoutDTO;
+import unir.des.software.smart.city.slots.dto.LayoutCellUpsertDTO;
 import unir.des.software.smart.city.slots.dto.LayoutUpsertRequest;
 import unir.des.software.smart.city.slots.enums.CellType;
 import unir.des.software.smart.city.slots.enums.SlotType;
 import unir.des.software.smart.city.slots.exception.BusinessException;
+import unir.des.software.smart.city.slots.mapper.FloorLayoutMapper;
 import unir.des.software.smart.city.slots.model.Floor;
 import unir.des.software.smart.city.slots.model.FloorLayout;
 import unir.des.software.smart.city.slots.model.FloorLayoutCell;
@@ -22,6 +23,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FloorLayoutService {
 
+    private final FloorLayoutMapper mapper;
     private final FloorRepository floorRepository;
     private final FloorLayoutRepository layoutRepository;
 
@@ -29,29 +31,32 @@ public class FloorLayoutService {
     public FloorLayoutDTO upsertLayout(String floorId, LayoutUpsertRequest req) {
         Floor floor = floorRepository.findById(floorId)
                 .orElseThrow(() -> new BusinessException("Floor not found"));
+        floor.setSlots(new ArrayList<>()); // reset slots, will be re-added if needed
 
         // index current slots by code for quick lookup
         Map<String, Slot> byCode = new HashMap<>();
-        for (Slot s : floor.getSlots()) {
-            byCode.put(s.getCode().toUpperCase(Locale.ROOT), s);
+        for (Slot slot : floor.getSlots()) {
+            byCode.put(slot.getCode().toUpperCase(Locale.ROOT), slot);
         }
 
         // build layout cells and add slots if needed
         List<FloorLayoutCell> cells = new ArrayList<>();
-        for (var c : req.cells()) {
-            CellType cellType = mapCellType(c.type());
+        int numberSlots = 0;
+        for (LayoutCellUpsertDTO c : req.cells()) {
+            CellType cellType = mapper.mapCellType(c.type());
             FloorLayoutCell cell = FloorLayoutCell.builder()
                     .row(c.row())
                     .col(c.col())
                     .type(cellType)
                     .build();
 
-            if (isParkingCell(cellType)) {
-                String code = "R" + c.row() + "C" + c.col();
+            if (mapper.isParkingCell(cellType)) {
+                numberSlots++;
+                String code = "" + numberSlots;
                 Slot slot = byCode.get(code.toUpperCase(Locale.ROOT));
                 if (slot == null) {
                     // create a new slot with inferred type
-                    SlotType slotType = mapSlotType(cellType);
+                    SlotType slotType = mapper.mapSlotType(cellType);
                     slot = Slot.builder()
                             .id(UUID.randomUUID().toString())
                             .code(code)
@@ -77,7 +82,7 @@ public class FloorLayoutService {
         layout.setCells(cells);
         layoutRepository.save(layout);
 
-        return toDTO(floor, layout);
+        return mapper.toDTO(floor, layout);
     }
 
     public FloorLayoutDTO getLayout(String floorId) {
@@ -85,54 +90,7 @@ public class FloorLayoutService {
                 .orElseThrow(() -> new NoSuchElementException("Floor not found"));
         FloorLayout layout = layoutRepository.findByFloorId(floorId)
                 .orElseThrow(() -> new NoSuchElementException("Layout not found"));
-        return toDTO(floor, layout);
+        return mapper.toDTO(floor, layout);
     }
 
-    private boolean isParkingCell(CellType t) {
-        return switch (t) {
-            case PARKING_SLOT, DISABLED -> true;
-            default -> false;
-        };
-    }
-
-    private CellType mapCellType(String type) {
-        return switch (type.toLowerCase(Locale.ROOT)) {
-            case "parking-slot" -> CellType.PARKING_SLOT;
-            case "disabled" -> CellType.DISABLED;
-            case "drive-lane" -> CellType.DRIVE_LANE;
-            case "entrance-down" -> CellType.ENTRANCE_DOWN;
-            case "entrance-left" -> CellType.ENTRANCE_LEFT;
-            case "entrance-right" -> CellType.ENTRANCE_RIGHT;
-            case "exit-right" -> CellType.EXIT_RIGHT;
-            case "exit-left" -> CellType.EXIT_LEFT;
-            case "exit-up" -> CellType.EXIT_UP;
-            case "empty-space", "" -> CellType.EMPTY_SPACE;
-            default -> throw new IllegalArgumentException("Unknown cell type: " + type);
-        };
-    }
-
-    private SlotType mapSlotType(CellType t) {
-        return switch (t) {
-            case DISABLED -> SlotType.DISABLED;
-            default -> SlotType.NORMAL;
-        };
-    }
-
-    private FloorLayoutDTO toDTO(Floor floor, FloorLayout layout) {
-        // index slots by id for occupancy status
-        Map<String, Slot> byId = new HashMap<>();
-        for (Slot s : floor.getSlots()) byId.put(s.getId(), s);
-
-        List<CellDTO> cells = layout.getCells().stream().map(c -> {
-            Slot s = c.getSlotId() != null ? byId.get(c.getSlotId()) : null;
-            Boolean occupied = s != null ? s.isOccupied() : null;
-            return new CellDTO(
-                    c.getRow(), c.getCol(),
-                    c.getType().name().toLowerCase(Locale.ROOT),
-                    c.getSlotId(), c.getSlotCode(), occupied
-            );
-        }).toList();
-
-        return new FloorLayoutDTO(floor.getId(), cells);
-    }
 }

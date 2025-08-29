@@ -1,0 +1,21 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: microservice-simulator
+
+targets:
+  parking-base-url: http://localhost:8087/microservice-parking/api/v1/parkings
+  slots-base-url: http://localhost:8087/microservice-slot/api/v1
+
+simulator:
+  cron: "0 */1 * * * *"  # cada 5 minutos (segundos, minutos, horas, ...)
+  per-floor-free-count: 10 # cuántas plazas liberar por floor en cada ciclo
+
+eureka:
+  instance:
+    hotHost: localhost
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

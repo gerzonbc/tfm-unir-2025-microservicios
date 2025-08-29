@@ -22,6 +22,7 @@
         <module>microservice-gateway</module>
         <module>microservice-parking</module>
         <module>microservice-slot</module>
+        <module>microservice-simulator</module>
     </modules>
 
     <properties>

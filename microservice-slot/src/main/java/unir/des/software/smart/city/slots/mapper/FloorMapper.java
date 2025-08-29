@@ -11,7 +11,7 @@ import java.util.UUID;
 @Component
 public class FloorMapper {
 
-    public static FloorSummaryDTO computeSummary(Floor floor) {
+    public FloorSummaryDTO computeSummary(Floor floor) {
         int total = 0;
         int occupied = 0;
         if (floor.getSlots() != null) {
