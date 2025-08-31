@@ -1,6 +1,7 @@
 package unir.des.software.smart.city.simulator.client;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,6 +11,7 @@ import unir.des.software.smart.city.simulator.dto.FloorLayoutDTO;
 import unir.des.software.smart.city.simulator.dto.OccupancyEventDTO;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class SlotsClient {
     private final WebClient http = WebClient.builder().build();
@@ -34,19 +36,38 @@ public class SlotsClient {
                 .block();
     }
 
-    public void sendFreeEvent(String floorId, String slotCode) {
+    public boolean sendOccupyEvent(String floorId, String slotCode) {
+        return sendEvent(floorId, slotCode, true, "simulator", java.time.Instant.now());
+    }
+
+    public boolean sendFreeEvent(String floorId, String slotCode) {
+        return sendEvent(floorId, slotCode, false, "simulator", java.time.Instant.now());
+    }
+
+    private boolean sendEvent(String floorId,
+                              String slotCode,
+                              boolean occupied,
+                              String source,
+                              java.time.Instant ts) {
         OccupancyEventDTO body = OccupancyEventDTO.builder()
-                .occupied(false)
-                .source("simulator")
-                .timestamp(java.time.Instant.now())
+                .occupied(occupied)
+                .source(source)
+                .timestamp(ts)
                 .build();
 
-        http.post()
-                .uri(base + "/floors/{floorId}/slots/{slotCode}/occupancy-event", floorId, slotCode)
-                .bodyValue(body)
-                .retrieve()
-                .bodyToMono(Void.class)
-                .onErrorResume(e -> Mono.empty())
-                .block();
+        try {
+            return Boolean.TRUE.equals(http.post()
+                    .uri(base + "/floors/{floorId}/slots/{slotCode}/occupancy-event", floorId, slotCode)
+                    .bodyValue(body)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .map(resp -> resp.getStatusCode().is2xxSuccessful())
+                    .onErrorReturn(false)
+                    .block());
+        } catch (Exception e) {
+            log.error("Failed to send occupancy event to floor {} slot {}: {}", floorId, slotCode, e.getMessage());
+            return false;
+        }
     }
+
 }

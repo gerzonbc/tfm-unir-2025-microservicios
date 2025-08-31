@@ -17,10 +17,11 @@ public class SimulatorController {
     private final SimulatorScheduler scheduler;
 
     @PostMapping("/tick/floor/{floorId}")
-    public Map<String, Object> manualTick(@PathVariable String floorId,
-                                          @RequestParam(defaultValue = "1") int count) {
-        int freed = scheduler.freeNInFloor(floorId, count);
-        return Map.of("floorId", floorId, "freed", freed);
+    public Map<String, Integer> manualTick(@PathVariable String floorId,
+                                           @RequestParam(defaultValue = "1") int count) {
+//        int freed = scheduler.freeNInFloor(floorId, count);
+//        return Map.of("floorId", floorId, "freed", freed);
+        return scheduler.toggleAllInFloor(floorId);
     }
 
     @PostMapping("/tick/parking/{parkingId}") // opcional
