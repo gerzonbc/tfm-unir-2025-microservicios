@@ -12,10 +12,7 @@ import unir.des.software.smart.city.simulator.dto.FloorDTO;
 import unir.des.software.smart.city.simulator.dto.FloorLayoutDTO;
 import unir.des.software.smart.city.simulator.dto.ParkingResponse;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -50,7 +47,8 @@ public class SimulatorScheduler {
     }
 
     public Map<String, Integer> toggleAllInFloor(String floorId) {
-        FloorLayoutDTO layout = slotsClient.getFloorLayout(floorId);
+        Optional<FloorLayoutDTO> layoutOpt = slotsClient.getFloorLayout(floorId);
+        FloorLayoutDTO layout = layoutOpt.orElse(null);
         if (layout == null || layout.getCells() == null) {
             return Map.of("toggled", 0, "freed", 0, "occupied", 0);
         }

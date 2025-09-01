@@ -10,6 +10,8 @@ import unir.des.software.smart.city.simulator.dto.FloorDTO;
 import unir.des.software.smart.city.simulator.dto.FloorLayoutDTO;
 import unir.des.software.smart.city.simulator.dto.OccupancyEventDTO;
 
+import java.util.Optional;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -28,12 +30,17 @@ public class SlotsClient {
                 .block();
     }
 
-    public FloorLayoutDTO getFloorLayout(String floorId) {
+    public Optional<FloorLayoutDTO> getFloorLayout(String floorId) {
         return http.get()
                 .uri(base + "/floors/{id}/layout", floorId)
                 .retrieve()
                 .bodyToMono(FloorLayoutDTO.class)
-                .block();
+                .switchIfEmpty(Mono.empty())
+                .onErrorResume(e -> {
+                    log.warn("Error al consultar layout de floor {}: {}", floorId, e.getMessage());
+                    return Mono.empty();
+                })
+                .blockOptional();
     }
 
     public boolean sendOccupyEvent(String floorId, String slotCode) {
