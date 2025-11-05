@@ -20,7 +20,7 @@ public class FloorLayoutMapper {
 
     public boolean isParkingCell(CellType t) {
         return switch (t) {
-            case PARKING_SLOT, DISABLED -> true;
+            case PARKING_SLOT, DISABLED, ELECTRIC_CHARGER -> true;
             default -> false;
         };
     }
@@ -37,6 +37,7 @@ public class FloorLayoutMapper {
             case "exit-left" -> CellType.EXIT_LEFT;
             case "exit-up" -> CellType.EXIT_UP;
             case "empty-space", "" -> CellType.EMPTY_SPACE;
+            case "electric-charger" -> CellType.ELECTRIC_CHARGER;
             default -> throw new IllegalArgumentException("Unknown cell type: " + type);
         };
     }
